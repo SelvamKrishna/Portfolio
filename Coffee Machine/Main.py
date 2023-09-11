@@ -14,35 +14,30 @@ class Ingredient:
         
 class Coins:
     def CalculateChange(self, amount: float, price: float) -> list:
-        self.coins: list[float] = [1.0, 0.5, 0.2, 0.1]
-        change: float = amount - price
-        change = round(change, 1)
+        coins: list[float] = [1.0, 0.5, 0.2, 0.1]
+        amount = int(amount * 100)
+        price = int(price * 100)
         
-        self.changeSet = []
+        change: int = amount - price
+        changeSet: list[float] = []
         
-        while round(sum(self.changeSet), 1) != change:
-            self.changeSet.append(self.coins[3])       
-        
-        self.tenCent = self.changeSet.count(self.coins[-1])
-        isMicroprocessing = True
-        
-        while isMicroprocessing:
-            if self.tenCent >= 10:
-                self.MicroProcess(10, 0)
-            elif self.tenCent >= 5:
-                self.MicroProcess(5, 1)
-            elif self.tenCent >= 2:
-                self.MicroProcess(2, 2)
+        while change > 0 and change != 0:
+            if change >= 100:
+                change -= 100
+                changeSet.append(coins[0])
+            elif change >= 50:
+                change -= 50
+                changeSet.append(coins[1])
+            elif change >= 20:
+                change -= 20
+                changeSet.append(coins[2])
+            elif change >= 10:
+                change -= 10
+                changeSet.append(coins[3])
             else:
-                isMicroprocessing = False
-                    
-        return self.changeSet
-
-    def MicroProcess(self, size: int, coin: int):
-        for _ in range(size):
-            self.changeSet.remove(self.coins[3])
-        self.tenCent -= size
-        self.changeSet.append(self.coins[coin])
+                pass
+        
+        return changeSet
         
 class Coffee:
     def __init__(self, id: int) -> None:
@@ -144,9 +139,9 @@ class Machine:
                 payment: float = sum(payAmount)
                 
                 change = self.coins.CalculateChange(payment, coffee.price)
-                print(f"Payment : {round(payment, 2)}")
-                print(f"Price   : {round(coffee.price, 2)}")
-                print(f"Change  : {round(sum(change), 2)}")
+                print(f"Payment : $ {round(payment, 2)}")
+                print(f"Price   : $ {round(coffee.price, 2)}")
+                print(f"Change  : $ {round(sum(change), 2)}")
                 print(f"Given   : {change}")
                 
                 self.water.Consume(coffee.waterAmt)
