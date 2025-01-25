@@ -1,8 +1,7 @@
+import pygame
 import copy
 
-# The suddoku puzzle must be given in this format where '0' represents empty squares
-# The code is working although it might contains some issues which went unnoticed
-
+# The Sudoku puzzle must be given in this format where '0' represents empty squares
 SUDOKU_PUZZLE: list[list[int]] = [
     [3, 0, 0, 8, 0, 1, 0, 0, 2],
     [2, 0, 1, 0, 3, 0, 6, 0, 4],
@@ -108,19 +107,44 @@ class AI:
 
     def placeChoice(self, xCord: int, yCord: int, value: int) -> None:
         self.board[xCord][yCord] = value
+        updateDisplay(self.board)
+        pygame.time.delay(100)
 
-        print('-' * 35)
-        print()
-        print(f"({xCord}, {yCord}) : {value}\n")
-        self.displayBoard()
+pygame.init()
+SCREEN_SIZE = 450
+CELL_SIZE = SCREEN_SIZE // 9
 
-    def displayBoard(self) -> None:
-        for row in self.board:
-            for cell in row:
-                if cell == 0:
-                    print(' ', end="|")
-                else:
-                    print(cell, end="|")
-            print()
+screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
+pygame.display.set_caption("Sudoku Solver")
+font = pygame.font.Font(None, 40)
 
-main = AI()
+def drawGrid():
+    for i in range(10):
+        lineWidth = 3 if i % 3 == 0 else 1
+        pygame.draw.line(screen, (255, 255, 255), (0, i * CELL_SIZE), (SCREEN_SIZE, i * CELL_SIZE), lineWidth)
+        pygame.draw.line(screen, (255, 255, 255), (i * CELL_SIZE, 0), (i * CELL_SIZE, SCREEN_SIZE), lineWidth)
+
+def updateDisplay(board):
+    screen.fill((0, 0, 0))
+    drawGrid()
+    for row in range(9):
+        for col in range(9):
+            value = board[row][col]
+            if value != 0:
+                text = font.render(str(value), True, (255, 255, 255))
+                textRect = text.get_rect(center=(col * CELL_SIZE + CELL_SIZE // 2, row * CELL_SIZE + CELL_SIZE // 2))
+                screen.blit(text, textRect)
+    pygame.display.flip()
+
+def main():
+    solve = AI()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+if __name__ == "__main__":
+    updateDisplay(SUDOKU_PUZZLE)
+    main()
